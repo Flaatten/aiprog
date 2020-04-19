@@ -1,7 +1,9 @@
-@staticmethod
-def is_valid(state):
-    # TODO
-    pass
+class InitialStateValidator:
+
+    @staticmethod
+    def is_valid(state):
+        # TODO
+        pass
 
 
 # package state;
