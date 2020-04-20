@@ -44,7 +44,6 @@ class TwoPlayerMonteCarloTreeSearchNode:
         self.children.add(child_node)
         return child_node
 
-
     def is_terminal_node(self):
         return self.state.is_game_over()
 
@@ -55,7 +54,7 @@ class TwoPlayerMonteCarloTreeSearchNode:
         if self.parent is not None:
             self.parent.backpropagate(reward)
 
-    def rollout(self):
+    def rollout(self):  # TODO MAKE THIS USE THE NEURAL NET
         current_rollout_state = self.state
         while not current_rollout_state.is_game_over():
             possible_moves = current_rollout_state.get_legal_actions()
@@ -71,7 +70,7 @@ class TwoPlayerMonteCarloTreeSearchNode:
         self.state.print_move()
 
     def untried_actions(self):
-        pass # TODO
+        pass  # TODO
 
     def n(self):
         pass
@@ -111,5 +110,3 @@ class TwoPlayerMonteCarloTreeSearchNode:
     def rollout_policy(self, possible_moves):
         random_element_index = generate_random_int_in_range(0, len(possible_moves))
         return possible_moves.get(random_element_index)
-
-

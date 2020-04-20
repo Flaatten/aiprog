@@ -3,6 +3,7 @@ class InitialStateValidator:
     @staticmethod
     def is_valid(state):
         # TODO
+        # Raise exception if not valid
         pass
 
 

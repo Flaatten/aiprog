@@ -21,7 +21,7 @@ class HexGameState:
         pass
 
     def move(self, action):
-        pass
+        return HexGameState() # TODO FINISH
 
     def get_legal_actions(self):
         pass
