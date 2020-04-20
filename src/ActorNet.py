@@ -1,3 +1,4 @@
+import torch
 import torch as T
 import torch.nn as nn
 import torch.nn.functional as F
@@ -6,6 +7,7 @@ import numpy as np
 
 from constant.ANETOptimizer import ANETOptimizer
 from constant.ActivationFunction import ActivationFunction
+from constant.Path import Path
 
 
 class ActorNet(nn.Module):
@@ -77,4 +79,4 @@ class ActorNet(nn.Module):
         self.optimizer.zero_grad()
 
     def save_params(self, n_iterations):
-        pass  # TODO
+        torch.save(self.state_dict(), Path.NEURAL_NET + str(n_iterations) + ".model")

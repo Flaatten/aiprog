@@ -13,6 +13,7 @@ class Hex:
 
         self.root = TwoPlayerMonteCarloTreeSearchNode(state=HexGameState(state=self.board, next_to_move=start_player, action_that_resulted_in_the_current_state=None), parent=None)
 
+    # Used for simulations in fictitious game
     def run(self):
         while not self.is_finished():
             mcts = MonteCarloTreeSearch(self.root)
@@ -23,6 +24,7 @@ class Hex:
 
             self.root = best_node
 
+    # Used for moves in the actual game
     def move(self, action):
         new_state = self.root.state.move(action)
         self.root = TwoPlayerMonteCarloTreeSearchNode(state=new_state, parent=self.root)

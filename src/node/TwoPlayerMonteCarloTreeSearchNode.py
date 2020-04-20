@@ -18,6 +18,32 @@ class TwoPlayerMonteCarloTreeSearchNode:
             self.untried_actions = self.state.get_legal_actions()
         return self.untried_actions
 
+    def get_standardised_distribution(self):
+        dist = []
+
+        board_rep = self.state.get_board()
+
+        for cell in board_rep.split():
+            if cell is empty:  # TODO FIX WHEN MOAN HAS DECIDED UPON BOARD REPRESENTATION FORMAT
+                for child in self.children:
+                    if child.state.board[cell_index] == "VAL":  # child corresponds to current cell TODO FIX AFTER MOAN FINISHED ( FILL WITH FILL-VALUES )
+                        wins = 0
+                        win_key = child.parent.get_next_to_move()
+
+                        if win_key in child.results:
+                            wins = child.results.get(win_key)
+
+                        dist.append(wins / child.n())
+                        break  # continue with next cell
+
+                dist.append(0) # TODO cell is empty, but not found by rollout. Perhaps not an ideal way to handle it?
+            else:
+                dist.append(0)  # cell is busy, probability for taking action = 0
+
+        norm = [float(i) / sum(dist) for i in dist]
+
+        return norm
+
     def n(self):
         return self.num_visits
 
@@ -41,7 +67,7 @@ class TwoPlayerMonteCarloTreeSearchNode:
         next_state = self.state.move(action)
         child_node = TwoPlayerMonteCarloTreeSearchNode(next_state, self)
 
-        self.children.add(child_node)
+        self.children.append(child_node)
         return child_node
 
     def is_terminal_node(self):
@@ -63,32 +89,15 @@ class TwoPlayerMonteCarloTreeSearchNode:
 
         return current_rollout_state.game_result()
 
+    def rollout_policy(self, possible_moves):  # TODO CHANGE TO NEURAL NET
+        random_element_index = generate_random_int_in_range(0, len(possible_moves))
+        return possible_moves.get(random_element_index)
+
     def get_state(self):
         return self.state
 
     def print_move(self):
         self.state.print_move()
-
-    def untried_actions(self):
-        pass  # TODO
-
-    def n(self):
-        pass
-
-    def q(self):
-        pass
-
-    def expand(self):
-        pass
-
-    def is_terminal_node(self):
-        pass
-
-    def backpropagate(self, reward):
-        pass
-
-    def rollout(self):
-        pass
 
     def is_fully_expanded(self):
         return len(self.untried_actions()) == 0
@@ -107,6 +116,4 @@ class TwoPlayerMonteCarloTreeSearchNode:
 
         return current_best_child
 
-    def rollout_policy(self, possible_moves):
-        random_element_index = generate_random_int_in_range(0, len(possible_moves))
-        return possible_moves.get(random_element_index)
+

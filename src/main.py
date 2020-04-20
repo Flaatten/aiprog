@@ -40,7 +40,7 @@ def test():
                     reward = rollout_node.rollout()
                     rollout_node.backpropagate(reward)
 
-                distribution = None  # TODO
+                distribution = mcts.root.get_standardised_distribution()
                 buffer.add_case(ANETCase(mcts.root, distribution))
                 move = None # TODO
                 game.move(move)
