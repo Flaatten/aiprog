@@ -28,7 +28,7 @@ def test():
     net = ActorNet(input_dim=size ** 2, hidden_layers=hidden_layers_structure, output_dim=size ** 2, learning_rate=learning_rate, optimizer=ANET_optimizer, hidden_nodes_activation_function=hidden_nodes_activation_function)
 
     for n in range(number_of_episodes):
-        game = Hex("0" * (size ** 2), 1, number_of_search_games_per_actual_move)
+        game = Hex("01" + "00" * (size ** 2), 0, number_of_search_games_per_actual_move)
         if InitialStateValidator.is_valid(game.root.state):
 
             while not game.is_finished():
@@ -40,7 +40,7 @@ def test():
                     reward = rollout_node.rollout()
                     rollout_node.backpropagate(reward)
 
-                distribution = mcts.root.get_standardised_distribution()
+                distribution = None  # TODO
                 buffer.add_case(ANETCase(mcts.root, distribution))
                 move = None # TODO
                 game.move(move)

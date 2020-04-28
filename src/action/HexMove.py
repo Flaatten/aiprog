@@ -1,7 +1,10 @@
 class HexMove:
 
-    def __init__(self):
-        pass  # TODO SET VALUES
+    def __init__(self, row, col, player):
+        self.row = row
+        self.col = col
+        self.player = player
+        
 
 
 # package action;
