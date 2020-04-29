@@ -5,7 +5,8 @@ class HexMove:
         self.col = col
         self.player = player
         
-
+    def to_string(self):
+        print("Player " + str(self.player) + " filling [row, column]: [" + str(self.row) + ", " + str(self.col) + "]")
 
 # package action;
 #

@@ -26,16 +26,17 @@ class TwoPlayerMonteCarloTreeSearchNode:
     def get_standardised_distribution(self):
         dist = [0] * (len(self.state.board) ** 2)
 
+
         for row_i in range(len(self.state.board)):
-            for col_j in range(len(self.state.board)):
+            for col_j in range(len(self.state.board)): # TODO THIS FUNCTION IS NOT CORRECT
                 if self.state.is_open_cell([row_i, col_j]):
                     for child in self.children:
                         if not child.state.is_open_cell([row_i, col_j]):
-                            dist_index = 3 * row_i - 1 + (col_j + 1)
+                            dist_index = (len(self.state.board)) * row_i - 1 + (col_j + 1)
 
                             dist[dist_index] = child.n()
 
-        norm = [float(i) / sum(dist) if i != 0 else i for i in dist]
+        norm = [float(i) / sum(dist) if i != 0 else 0 for i in dist]
 
         return norm
 
