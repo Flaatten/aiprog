@@ -1,5 +1,7 @@
-from src.action.HexMove import HexMove
+import copy
 import numpy as np
+
+from action.HexMove import HexMove
 
 
 class HexGameState:
@@ -77,13 +79,13 @@ class HexGameState:
         return neighbour_list
 
     def is_move_legal(self, move):
-        return self._is_open_cell([move.row, move.col])
+        return self.is_open_cell([move.row, move.col])
 
     def move(self, action):
-        row = action.row
-        col = action.col
+        row = int(action.row)
+        col = int(action.col)
         player = action.player
-        _board = self.board
+        _board = copy.deepcopy(self.board)
         _board[row][col][player] = 1
         return HexGameState(_board, 1 - player, action)  # TODO FINISH
 
@@ -91,14 +93,11 @@ class HexGameState:
         legal_actions = []
         for row_i in range(len(self.board)):
             for col_j in range(len(self.board)):
-                if self._is_open_cell([row_i, col_j]):
+                if self.is_open_cell([row_i, col_j]):
                     legal_actions.append(HexMove(row_i, col_j, self.next_to_move))
         return legal_actions
 
-    def print_move(self):
-        pass
-
-    def _is_open_cell(self, cell):
+    def is_open_cell(self, cell):
         first_coordinate = cell[0]
         second_coordiate = cell[1]
         board_cell = self.board[first_coordinate][second_coordiate]

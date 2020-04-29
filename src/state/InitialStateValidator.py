@@ -17,6 +17,3 @@ class InitialStateValidator:
                     return True
 
         return False
-
-
-

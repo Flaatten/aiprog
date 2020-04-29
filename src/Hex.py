@@ -1,7 +1,10 @@
+import numpy as np
+import random
+
 from MonteCarloTreeSearch import MonteCarloTreeSearch
+from action.HexMove import HexMove
 from node.TwoPlayerMonteCarloTreeSearchNode import TwoPlayerMonteCarloTreeSearchNode
 from state.HexGameState import HexGameState
-import numpy as np
 
 
 class Hex:
@@ -11,7 +14,6 @@ class Hex:
         self.verbose = verbose
         self.num_simulations = num_simulations
         self._create_board(board_representation)
-
         self.root = TwoPlayerMonteCarloTreeSearchNode(state=HexGameState(state=self.board, next_to_move=start_player, action_that_resulted_in_the_current_state=None), parent=None)
 
     def run(self):
@@ -57,10 +59,11 @@ class Hex:
         board = [[[boardBits[(size * i + j) * 2], boardBits[(size * i + j) * 2 + 1]] for j in range(size)] for i in
                  range(size)]
 
-        return board
+        self.board = board
 
     def get_root(self):
         return self.root
 
     def is_finished(self):
         return self.root.state.is_game_over()
+
