@@ -12,17 +12,17 @@ import copy
 
 
 def test():
-    size = 5
+    size = 4
     number_of_episodes = 1000
-    number_of_search_games_per_actual_move = 25
-    learning_rate = 0.02
-    hidden_layers_structure = [10, 5, 6]
+    number_of_search_games_per_actual_move = 50
+    learning_rate = 0.05
+    hidden_layers_structure = [7, 6]
     hidden_nodes_activation_function = ActivationFunction.RELU
     ANET_optimizer = ANETOptimizer.SGD
     number_of_ANETs_to_cache_for_TOPP = 1
     num_games_to_be_played_between_two_agenst_during_TOPP = 2
     save_interval_for_ANET = 5
-    number_of_cases_from_buffer_for_intertraining = 10
+    number_of_cases_from_buffer_for_intertraining = 20
     epsilon = 0.3
     starting_player = 0
 
@@ -54,7 +54,8 @@ def test():
             raise ValueError("State not valid: " + game.root.state)
 
         if n % 5 == 0:
-            epsilon = epsilon * 0.999
+            epsilon = epsilon * 0.985
+            learning_rate = learning_rate * 0.985
 
         if n % save_interval_for_ANET == 0:
             net.assess_performance(num_games=10, starting_player=starting_player, size=size, number_of_search_games_per_actual_move=num_games_to_be_played_between_two_agenst_during_TOPP)
