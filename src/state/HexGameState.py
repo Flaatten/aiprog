@@ -1,4 +1,6 @@
 import copy
+import random
+
 import numpy as np
 
 from action.HexMove import HexMove
@@ -87,7 +89,7 @@ class HexGameState:
         player = action.player
         _board = copy.deepcopy(self.board)
         _board[row][col][player] = 1
-        return HexGameState(_board, 1 - player, action)  # TODO FINISH
+        return HexGameState(_board, 1 - player, action)
 
     def get_legal_actions(self):
         legal_actions = []
@@ -103,14 +105,39 @@ class HexGameState:
         board_cell = self.board[first_coordinate][second_coordiate]
         return board_cell[0] + board_cell[1] < 1
 
+    def set_invalid_actions_to_zero_from_list(self, list):
+        size = np.sqrt(len(list))
+        for i in range(len(list)):
+            row_index = int(np.floor(i / size))
+            col_index = int(i % size)
+
+            cell = [row_index, col_index]
+
+            #if list[i] < 0:
+            #    list[i] = 0
+
+            if not self.is_open_cell(cell):
+                list[i] = 0
+            else:
+                pass
+        return list
+
+
     def to_string(self):
-        p1_turn = str(self.next_to_move - 1)
+        p1_turn = str(1 - self.next_to_move)
         p2_turn = str(self.next_to_move)
-        stateString = p1_turn + p2_turn
+        stateString = ""
+        stateString += p1_turn + p2_turn
         for row_i in range(len(self.board)):
             for col_j in range(len(self.board)):
                 for player in range(2):
-                    stateString += self.board[row_i][col_j][player]
+                    stateString += str(self.board[row_i][col_j][player])
+
+        return stateString
+
+    # used as input for neural net
+    def as_list(self):
+        return [int(i) for i in self.to_string()]
 
     def _render_cell_value(self, row, col):
         if self.board[row][col][0] == 1:
@@ -134,9 +161,50 @@ class HexGameState:
                 string += " " + self._render_cell_value(len(self.board) - 1 - j, i + j)
             print(string)
 
+    def get_greedy_move(self, distribution):
+        current_best_index = None
+        current_best_score = None
+        for i in range(len(distribution)):
+            if current_best_score is None:
+                current_best_index = i
+                current_best_score = distribution[i]
+            else:
+                score = distribution[i]
 
+                if score > current_best_score:
+                    current_best_index = i
+                    current_best_score = distribution[i]
 
+        if current_best_index is None:
+            raise ValueError("Distribution empty")
 
+        num_rows = np.sqrt(len(distribution))
+        row_index = np.floor(current_best_index / num_rows)
+        col_index = current_best_index % num_rows
 
+        move = HexMove(row_index, col_index, self.next_to_move)
+        return move
 
+    def get_random_weighted_move(self, distribution):
+        rand_num = random.random()
 
+        sum_ = 0
+
+        for i in range(len(distribution)):
+            sum_ += distribution[i]
+
+            if sum_ >= rand_num:
+                move_index = i
+                # move index i = the move to be taken
+                # find row and col
+                num_rows = len(self.board)
+
+                row_index = np.floor(move_index / num_rows)
+                col_index = move_index % num_rows
+
+                move = HexMove(row_index, col_index, self.next_to_move)
+                return move
+
+        raise ValueError("No move found, using the distribution and random number " + str(rand_num))
+
+        # move i is the next move

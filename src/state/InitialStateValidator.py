@@ -4,9 +4,8 @@ class InitialStateValidator:
 
     @staticmethod
     def is_valid(state):
-
+        return True # TODO FIX
         # State is the string representing the board
-
         bits = []
         for letter in state:
             bits.append(int(letter))

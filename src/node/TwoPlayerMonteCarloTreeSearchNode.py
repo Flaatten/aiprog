@@ -35,21 +35,6 @@ class TwoPlayerMonteCarloTreeSearchNode:
 
                             dist[dist_index] = child.n()
 
-                    # for child in self.children:
-                    #     if not child.state.is_open_cell([row_i, col_j]):
-                    #         dist_index = 3 * row_i - 1 + (col_j + 1)
-                    #         dist[dist_index] = dist[dist_index] + 1
-
-                    # if child.state.board[cell_index] == "VAL":  # child corresponds to current cell TODO FIX AFTER MOAN FINISHED ( FILL WITH FILL-VALUES )
-                    #     wins = 0
-                    #     win_key = child.parent.get_next_to_move()
-                    #
-                    #     if win_key in child.results:
-                    #         wins = child.results.get(win_key)
-                    #
-                    #     dist.append(wins / child.n())
-                    #     break  # continue with next cell
-
         norm = [float(i) / sum(dist) if i != 0 else i for i in dist]
 
         return norm
@@ -130,25 +115,3 @@ class TwoPlayerMonteCarloTreeSearchNode:
 
         return current_best_child
 
-    def get_weighted_move(self, distribution):
-        rand_number = random.random()
-        sum_ = 0
-
-        for i in range(len(distribution)):
-            sum_ += distribution[i]
-
-            if sum_ >= rand_number:
-                move_index = i
-                # move index i = the move to be taken
-                # find row and col
-                num_rows = len(self.state.board)
-
-                row_index = np.floor(move_index / num_rows)
-                col_index = move_index % num_rows
-
-                move = HexMove(row_index, col_index, self.state.next_to_move)
-                return move
-
-        raise ValueError("No move found, using the distribution and random number " + str(rand_number))
-
-                # move i is the next move
