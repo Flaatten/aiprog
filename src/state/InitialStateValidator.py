@@ -4,15 +4,16 @@ class InitialStateValidator:
 
     @staticmethod
     def is_valid(state):
-        return True # TODO FIX
-        # State is the string representing the board
-        bits = []
-        for letter in state:
-            bits.append(int(letter))
 
-        if np.sqrt(len(bits)/2 - 1) % 1 == 0:
-            for i in range(len(bits)/2):
-                if bits(i) == 0 or bits(i) == 1 and bits(i + 1) == 0 or bits(i + 1) == 1 and bits(i) + bits(i + 1) <= 1:
-                    return True
+        size = len(state)
 
-        return False
+        for i in range(size):
+            if len(state[i]) != size:
+                return False
+            for j in range(size):
+                if state[i][j][0] + state[i][j][1] > 1:
+                    return False
+                for w in range(2):
+                    if state[i][j][w] != 0 and state[i][j][w] != 1:
+                        return False
+        return True
