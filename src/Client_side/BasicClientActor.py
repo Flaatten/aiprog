@@ -34,10 +34,21 @@ class BasicClientActor(BasicClientActorAbs):
                 state_string += "01"
             elif number == 2:
                 state_string += "10"
+        size=int(math.sqrt(len(state)-1))
 
-        player = state[0] - 1
+        bits = []
 
-        game_state = HexGameState(state_string, player, None)
+        for letter in state_string:
+            bits.append(int(letter))
+
+        player = bits[1]
+
+        boardBits = bits[2:]
+
+        board = [[[boardBits[(size * i + j) * 2], boardBits[(size * i + j) * 2 + 1]] for j in range(size)] for i in
+                 range(size)]
+
+        game_state = HexGameState(board, player, None)
 
         model = torch.load(PATH)
 
