@@ -1,40 +1,19 @@
+import numpy as np
+
 class InitialStateValidator:
 
     @staticmethod
     def is_valid(state):
-        # TODO
-        # Raise exception if not valid
-        return True
 
+        # State is the string representing the board
 
-# package state;
-#
-# public class InitialStateValidator {
-#
-#     public static boolean isValid(TwoPlayerAbstractGameState state) {
-#         if (state instanceof LedgeGameState) {
-#             int numGoldCoins = 0;
-#
-#             // Contains a single gold coin
-#             for (Integer val : ((LedgeGameState) state).getBoard()) {
-#                 if (val == LedgeGameState.GOLD_COIN) {
-#                     numGoldCoins++;
-#                 }
-#             }
-#
-#             // Values within 0-2 (Open, Cobber, Gold)
-#             for (Integer val : ((LedgeGameState) state).getBoard()) {
-#                 if (val < 0 || val > 2) {
-#                     return false;
-#                 }
-#             }
-#
-#             return numGoldCoins == 1;
-#         } else if (state instanceof NIMGameState) {
-#             return ((NIMGameState) state).getNumPiecesLeft() > 0;
-#         } else {
-#             throw new IllegalArgumentException("State object not defind within InitialStateValidator");
-#         }
-#     }
-#
-# }
+        bits = []
+        for letter in state:
+            bits.append(int(letter))
+
+        if np.sqrt(len(bits)/2 - 1) % 1 == 0:
+            for i in range(len(bits)/2):
+                if bits(i) == 0 or bits(i) == 1 and bits(i + 1) == 0 or bits(i + 1) == 1 and bits(i) + bits(i + 1) <= 1:
+                    return True
+
+        return False
