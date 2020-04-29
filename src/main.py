@@ -14,7 +14,7 @@ import copy
 def test():
     size = 3
     number_of_episodes = 10
-    number_of_search_games_per_actual_move = 100
+    number_of_search_games_per_actual_move = 400
     learning_rate = 0.01
     hidden_layers_structure = [5, 5, 5]
     hidden_nodes_activation_function = ActivationFunction.RELU
@@ -25,31 +25,31 @@ def test():
     number_of_cases_from_buffer_for_intertraining = 10
 
     buffer = ReplayBuffer()  # TODO INPUT DIMS TO NEURAL NET NOT CORRECT
-    net = ActorNet(input_dim=size ** 2, hidden_layers=hidden_layers_structure, output_dim=size ** 2, learning_rate=learning_rate, optimizer=ANET_optimizer, hidden_nodes_activation_function=hidden_nodes_activation_function)
+    net = ActorNet(input_dim=(size ** 2) * 2 + 2, hidden_layers=hidden_layers_structure, output_dim=size ** 2, learning_rate=learning_rate, optimizer=ANET_optimizer, hidden_nodes_activation_function=hidden_nodes_activation_function)
 
     for n in range(number_of_episodes):
-        game = Hex("01" + "00" * (size ** 2), 0, number_of_search_games_per_actual_move)
+        game = Hex("01" + "00" * (size ** 2), 0, number_of_episodes)
+        #game = Hex("00" * (size ** 2), 0, number_of_episodes)
         if InitialStateValidator.is_valid(game.root.state):
-
             while not game.is_finished():
                 s_init = copy.deepcopy(game.root)
                 mcts = MonteCarloTreeSearch(s_init)
+                mcts.best_action(number_of_search_games_per_actual_move)
 
-                for i in range(number_of_search_games_per_actual_move):
-                    rollout_node = mcts.do_tree_policy()
-                    reward = rollout_node.rollout()
-                    rollout_node.backpropagate(reward)
+                distribution = mcts.root.get_standardised_distribution()
 
-                distribution = None  # TODO
                 buffer.add_case(ANETCase(mcts.root, distribution))
-                move = None # TODO
+
+                move = s_init.get_weighted_move(distribution)
                 game.move(move)
 
-            train_data = ANETDataset(buffer.get_mini_batch(number_of_cases_from_buffer_for_intertraining))
+            train_data = ANETDataset(buffer.get_mini_batch(number_of_cases_from_buffer_for_intertraining))  # list of nodes
             net.train_using_buffer_subset(train_data)
 
-            if n % save_interval_for_ANET == 0:
-                net.save_params(n)
+            #if n % save_interval_for_ANET == 0:
+            #    net.save_params(n)
+        else:
+            raise ValueError("State not valid: " + game.root.state)
 
 
         """
@@ -74,3 +74,4 @@ def test():
         """
 
 
+test()

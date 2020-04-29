@@ -12,7 +12,7 @@ from constant.Path import Path
 
 class ActorNet(nn.Module):
 
-    def __init__(*, self, input_dim, hidden_layers, output_dim, learning_rate, optimizer=ANETOptimizer.SGD, hidden_nodes_activation_function=ActivationFunction.TANH):
+    def __init__(self, input_dim, hidden_layers, output_dim, learning_rate, optimizer=ANETOptimizer.SGD, hidden_nodes_activation_function=ActivationFunction.TANH):
         super(ActorNet, self).__init__()
         self.lr = learning_rate
         self.hidden_nodes_activation_function = hidden_nodes_activation_function
@@ -20,9 +20,7 @@ class ActorNet(nn.Module):
         self.optimizer = self._init_optimizer(optimizer)
 
     def forward(self, observation):
-        observation = np.array(list(observation), dtype=float)
-        state = T.from_numpy(observation).float()
-        x = state
+        x = observation
 
         # pass through layer, except for the output layer
         for i in range(len(self.layers) - 1):

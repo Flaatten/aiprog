@@ -4,7 +4,7 @@ class InitialStateValidator:
     def is_valid(state):
         # TODO
         # Raise exception if not valid
-        pass
+        return True
 
 
 # package state;
