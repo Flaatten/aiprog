@@ -1,15 +1,18 @@
+import torch
+
+from ActorNet import ActorNet
 from state.HexGameState import HexGameState
 
 
 class TOPP:
 
     def __init__(self, board_size, series_size, paths, verbose=False):
-
+        self.paths = paths
         self.models = []
         self.number_of_policies = len(paths)
         self.board_size = board_size
         self.series_size = series_size
-        self.scores = []
+        self.scores = [0] * len(paths)
         self.verbose = verbose
 
         for i in range(len(paths)):
@@ -24,7 +27,8 @@ class TOPP:
                 if policy_j > policy_i:
                     self.play_series(policy_i, policy_j)
 
-        for i in range(self.number_of_policies):
+        for i in range(self.number_of_policies): # (num players - 1) * antall games per series
+            print(self.paths[i])
             print("Policy number " + str(i) + " won " + str(self.scores[i]) + " out of " + str(self.series_size) + " matches")
 
 
@@ -33,9 +37,9 @@ class TOPP:
 
         for game_number in range(self.series_size):
             if game_number%2 == 0:
-                self.play_game(self, policy_i, policy_j)
+                self.play_game(policy_i, policy_j)
             else:
-                self.play_game(self, policy_j, policy_i)
+                self.play_game(policy_j, policy_i)
 
     def play_game(self, player_1, player_2):
 
@@ -45,19 +49,19 @@ class TOPP:
         board = self._create_board()
         game_state = HexGameState(board, 0, None)
 
-        while game_state.is_game_over != True:
+        while not game_state.is_game_over():
 
             if self.verbose == True:
                 game_state.render()
 
             current_player = game_state.next_to_move
             action = self.models[policies[current_player]].predict(game_state,0)
-            game_state = HexGameState.move()
+            game_state = game_state.move(action)
 
         if self.verbose == True:
             game_state.render()
 
-        winner = HexGameState.game_result[1]
+        winner = game_state.game_result()[1]
         self.scores[policies[winner]] += 1
 
     def _create_board(self):
