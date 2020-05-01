@@ -1,3 +1,5 @@
+import os
+
 import torch
 
 from ActorNet import ActorNet
@@ -16,7 +18,11 @@ class TOPP:
         self.verbose = verbose
 
         for i in range(len(paths)):
-            self.models.append(torch.load(paths[i]))
+            if isinstance(paths[i], str):
+                print(paths[i])
+                self.models.append(torch.load(paths[i]))
+            elif isinstance(paths[i], ActorNet):
+                self.models.append(paths[i])
 
     def play_tournament(self):
 
@@ -27,16 +33,14 @@ class TOPP:
                 if policy_j > policy_i:
                     self.play_series(policy_i, policy_j)
 
-        for i in range(self.number_of_policies): # (num players - 1) * antall games per series
+        for i in range(self.number_of_policies):  # (num players - 1) * antall games per series
             print(self.paths[i])
-            print("Policy number " + str(i) + " won " + str(self.scores[i]) + " out of " + str(self.series_size) + " matches")
-
-
+            print("Policy number " + str(i) + " won " + str(self.scores[i]) + " out of " + str(int(len(self.paths) - 1) * self.series_size) + " matches")
 
     def play_series(self, policy_i, policy_j):
 
         for game_number in range(self.series_size):
-            if game_number%2 == 0:
+            if game_number % 2 == 0:
                 self.play_game(policy_i, policy_j)
             else:
                 self.play_game(policy_j, policy_i)
@@ -55,7 +59,7 @@ class TOPP:
                 game_state.render()
 
             current_player = game_state.next_to_move
-            action = self.models[policies[current_player]].predict(game_state,0)
+            action = self.models[policies[current_player]].predict(game_state, 0)
             game_state = game_state.move(action)
 
         if self.verbose == True:
@@ -65,5 +69,33 @@ class TOPP:
         self.scores[policies[winner]] += 1
 
     def _create_board(self):
-        board = [[[0,0] for j in range(self.board_size)] for i in range(self.board_size)]
+        board = [[[0, 0] for j in range(self.board_size)] for i in range(self.board_size)]
         return board
+
+    @staticmethod
+    def get_model_paths(n):
+        absolute_path = "/Users/andreaswilhelmflattt/Documents/NTNU/10. Semester Vår 2020/AI Prog/oving_3/data/" + str(n) + "/par_trained_nets/"
+
+        paths_ = []
+
+        if n == 3:
+            files = ["100", "150", "200", "250", "400"]
+
+            for file in files:
+                paths_.append(absolute_path + file + ".model")
+
+        elif n == 4:
+            files = ["100", "150", "200", "250", "400"]
+
+            for file in files:
+                paths_.append(absolute_path + file + ".model")
+
+        elif n == 5:
+            files = ["100", "150", "200", "250", "400"]
+
+            for file in files:
+                paths_.append(absolute_path + file + ".model")
+
+        return paths_
+
+
